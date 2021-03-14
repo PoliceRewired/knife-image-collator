@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImageCollatorLib
 {
-    public class MinimalTweet
+    public class MinimalTweetDTO
     {
         public DateTime Created { get; set; }
         public string Username { get; set; }

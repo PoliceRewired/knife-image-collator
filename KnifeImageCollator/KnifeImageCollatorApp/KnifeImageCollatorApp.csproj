@@ -8,4 +8,15 @@
   <ItemGroup>
     <ProjectReference Include="..\ImageCollatorLib\ImageCollatorLib.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove=".env.prod" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".env.prod">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
