@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnifeImageCollatorApp", "KnifeImageCollatorApp\KnifeImageCollatorApp.csproj", "{1715FF23-02D6-41E9-9442-8651F93E20EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCollatorLib", "ImageCollatorLib\ImageCollatorLib.csproj", "{063C1DE4-6C93-49AC-A76A-37F599C12E3C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1715FF23-02D6-41E9-9442-8651F93E20EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1715FF23-02D6-41E9-9442-8651F93E20EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1715FF23-02D6-41E9-9442-8651F93E20EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1715FF23-02D6-41E9-9442-8651F93E20EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B582BFDC-0F36-44AD-B561-C8CB1C0947F6}
+	EndGlobalSection
+EndGlobal
