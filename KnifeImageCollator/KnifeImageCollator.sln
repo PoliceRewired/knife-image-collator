@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnifeImageCollatorApp", "Kn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCollatorLib", "ImageCollatorLib\ImageCollatorLib.csproj", "{063C1DE4-6C93-49AC-A76A-37F599C12E3C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01D17A27-1E0B-416E-B5D3-ED11EBBDBD44}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
