@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using ImageCollatorLib;
 
@@ -10,6 +11,23 @@ namespace KnifeImageCollatorApp
         {
             var environment = GetArg(args, 0, "environment").Trim().ToLower();
             var username = GetArg(args, 1, "username").Trim().ToLower();
+            var periodStr = GetArg(args, 2, "period").Trim().ToLower();
+            var filterStr = GetArg(args, 3, "filter").Trim().ToLower();
+            var actionStr = GetArg(args, 4, "action").Trim().ToLower();
+            var group = GetArg(args, 5, "group").Trim().ToLower();
+
+            var dates = ArgumentHelper.ParsePeriod(periodStr);
+            var start = dates[0];
+            var end = dates[1];
+
+            var tweetFilter = ArgumentHelper.ParseTweetFilter(filterStr);
+            var mediaFilter = ArgumentHelper.ParseMediaFilter(filterStr);
+
+            Console.WriteLine("Environment: " + environment);
+            Console.WriteLine("Username:    " + username);
+            Console.WriteLine("Period:      " + periodStr);
+            Console.WriteLine("↳ Start:     " + start.ToShortDateString());
+            Console.WriteLine("↳ End:       " + end.ToShortDateString());
 
             var envFile = ".env." + environment;
             DotNetEnv.Env.Load(envFile);
@@ -18,17 +36,42 @@ namespace KnifeImageCollatorApp
             var twitterAccessToken = GetEnv("TWITTER_ACCESS_TOKEN");
             var twitterAccessTokenSecret = GetEnv("TWITTER_ACCESS_TOKEN_SECRET");
 
-            Console.WriteLine("Reading today's tweets for: " + username);
             var inspector = new TwitterInspector(twitterApiKey, twitterApiKeySecret, twitterAccessToken, twitterAccessTokenSecret, Console.WriteLine);
             var found = await inspector.FilterTimelineAsync(
                 username,
-                DateTime.Now.Date,
-                DateTime.Now.AddDays(1).Date,
-                (tweet) => true);
-
+                start, end,
+                tweetFilter,mediaFilter);
+            
             foreach (var mt in found)
             {
-                Console.WriteLine(mt.Text);
+                var directory = Path.Combine(Directory.GetCurrentDirectory(), group, mt.Created.ToString("yyyy-MM-dd"));
+                Directory.CreateDirectory(directory);
+
+                switch (actionStr)
+                {
+                    case "list":
+                        Console.WriteLine("Text: " + mt.Text);
+                        break;
+
+                    case "download":
+                        Console.WriteLine("Text:  " + mt.Text);
+                        // TODO: append to CSV
+
+                        int count = 0;
+                        foreach (var media in mt.ImageUrls)
+                        {
+                            int mediaIndex = count++;
+                            var name = string.Format("{0}-{1}-{2}-{3}", mt.Created.Ticks, mt.Username, mt.TweetId, mediaIndex);
+                            var path = Path.Combine(directory, name);
+                            // TODO: download the image
+                            Console.WriteLine("Image: " + path);
+                        }
+                        break;
+
+                    default:
+                        throw new ArgumentException("Unrecognised action: " + actionStr);
+                }
+                
             }
         }
 
@@ -59,7 +102,7 @@ namespace KnifeImageCollatorApp
         public static string GetEnv(string key, bool required = true)
         {
             var result = DotNetEnv.Env.GetString(key);
-            Console.WriteLine("Environment variable: " + key + (string.IsNullOrWhiteSpace(result) ? " found" : " not found"));
+            Console.WriteLine("Environment variable: " + key + (string.IsNullOrWhiteSpace(result) ? " not found" : " found"));
             if (required && string.IsNullOrWhiteSpace(result))
             {
                 throw new ArgumentNullException(key, "The " + key + " environment variable is not set.");

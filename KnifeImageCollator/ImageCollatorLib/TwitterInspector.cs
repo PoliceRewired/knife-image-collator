@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tweetinvi;
 using Tweetinvi.Models;
+using Tweetinvi.Models.Entities;
 
 namespace ImageCollatorLib
 {
@@ -19,7 +20,7 @@ namespace ImageCollatorLib
 
         protected Action<string> Log;
 
-        public async Task<IEnumerable<MinimalTweetDTO>> FilterTimelineAsync(string username, DateTime earliestDate, DateTime latestDate, Func<ITweet,bool> filter)
+        public async Task<IEnumerable<MinimalTweetDTO>> FilterTimelineAsync(string username, DateTime earliestDate, DateTime latestDate, Func<ITweet,bool> tweetFilter, Func<IMediaEntity,bool> mediaFilter)
         {
             // compose search criteria
             var criteria = string.Format("from:{0} since:{1} until:{2}",
@@ -37,7 +38,7 @@ namespace ImageCollatorLib
                 var searchPage = await searchIterator.NextPageAsync();
                 foreach (var tweet in searchPage)
                 {
-                    if (filter(tweet))
+                    if (tweetFilter(tweet))
                     {
                         var minimalTweet = new MinimalTweetDTO()
                         {
@@ -45,8 +46,11 @@ namespace ImageCollatorLib
                             Text = tweet.FullText,
                             Username = tweet.CreatedBy.ScreenName,
                             UserId = tweet.CreatedBy.Id,
-                            ImageUrls = tweet.Media.Select(m => m.MediaURLHttps)
+                            TweetId = tweet.Id,
+                            ImageUrls = tweet.Media.Where(mediaFilter).Select(m => m.MediaURLHttps)
                         };
+                        Console.WriteLine("MediaTypes: " + string.Join(",", tweet.Media.Select(m => m.MediaType)));
+
                         collatedTweets.Add(minimalTweet);
                     }                    
                 }

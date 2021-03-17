@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.gitignore = ..\.gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCollatorFunction", "ImageCollatorFunction\ImageCollatorFunction.csproj", "{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCollatorFunction.Tests", "ImageCollatorFunction.Tests\ImageCollatorFunction.Tests.csproj", "{76485180-8C67-4AE5-9C04-4FBADE628A65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{063C1DE4-6C93-49AC-A76A-37F599C12E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76485180-8C67-4AE5-9C04-4FBADE628A65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76485180-8C67-4AE5-9C04-4FBADE628A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76485180-8C67-4AE5-9C04-4FBADE628A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76485180-8C67-4AE5-9C04-4FBADE628A65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

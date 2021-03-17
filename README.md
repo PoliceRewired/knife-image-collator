@@ -22,10 +22,21 @@ You can test the tool locally using the associated command line app `KnifeImageC
 * Build and run the app:
 
 ```
-dotnet run <environment> <username>
+dotnet run <environment> <username> <period> <filter> <action> <group>
 ```
 
-This application is a work in progress. At the moment it will retrieve and summarise all tweets posted by that username today.
+It will retrieve and summarise all tweets posted by that username.
+
+* Choices for **period**: `today`, `yesterday`, `thisweek`, `lastweek`
+* Choices for **filter**: `all`, `imagesonly`
+* Choices for **action**: `list`, `download`
+* For **group**, provide a name to group all results by
+
+eg.
+
+```bash
+dotnet run prod instantiator today imagesonly download test
+```
 
 ## Environment variables
 
