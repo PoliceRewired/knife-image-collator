@@ -25,12 +25,15 @@ You can test the tool locally using the associated command line app `KnifeImageC
 dotnet run <environment> <username> <period> <filter> <action> <group>
 ```
 
-It will retrieve and summarise all tweets posted by that username.
-
 * Choices for **period**: `today`, `yesterday`, `thisweek`, `lastweek`
 * Choices for **filter**: `all`, `imagesonly`
 * Choices for **action**: `list`, `download`
 * For **group**, provide a name to group all results by
+
+It will retrieve and summarise all tweets posted by that username, placing them in the following folder structure:
+
+
+
 
 eg.
 
