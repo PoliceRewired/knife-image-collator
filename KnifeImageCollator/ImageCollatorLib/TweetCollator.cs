@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Tweetinvi.Models;
@@ -20,14 +23,17 @@ namespace ImageCollatorLib
         Func<ITweet, bool> tweetFilter;
         Func<IMediaEntity, bool> mediaFilter;
         Action<string> Log;
+        string bucket;
 
-        public TweetCollator(Filter filter, CollateAction action, string group, string csvFilename, Action<string> log)
+        public TweetCollator(Filter filter, CollateAction action, string group, string csvFilename, Action<string> log, string bucket = null)
         {
             this.filter = filter;
             this.action = action;
             this.group = group;
             this.csvFilename = csvFilename;
             this.Log = log;
+            this.bucket = bucket;
+
             tweetFilter = FilterHelper.ParseTweetFilter(filter);
             mediaFilter = FilterHelper.ParseMediaFilter(filter);
         }
@@ -79,19 +85,57 @@ namespace ImageCollatorLib
         {
             foreach (var tweet in tweets)
             {
+                Log("Text:  " + tweet.Text);
                 switch (action)
                 {
                     case CollateAction.list:
-                        Log("Text: " + tweet.Text);
+                        break;
+
+                    case CollateAction.s3:
+                        Log("Storing in S3...");
+                        var groupKey = CalcGroupDirectoryPath();
+                        var csvFileKey = Path.Combine(groupKey, csvFilename);
+                        using (var s3 = new S3Helper(bucket, Log))
+                        {
+                            var keys = await s3.ListBucketObjects();
+
+                            if (keys.Contains(csvFileKey))
+                            {
+                                var recordedTweets = new List<MinimalTweetDTO>();
+                                using (var csvStream = await s3.GetObjectAsync(csvFileKey))
+                                {
+                                    recordedTweets = CsvHelper.ReadCsv(csvStream);
+                                    recordedTweets.AddRange(tweets);
+                                    await StreamToS3Async(s3, recordedTweets, csvFileKey);
+                                }
+                            }
+                            else
+                            {
+                                await StreamToS3Async(s3, tweets, csvFileKey);
+                            }
+
+                            int index = 0;
+                            foreach (var mediaURL in tweet.ImageUrls)
+                            {
+                                var tweetDirectoryKey = CalcTweetDirectoryPath(tweet);
+                                int mediaIndex = index++;
+                                var mediaFileName = CalcMediaFilename(tweet, mediaURL, mediaIndex);
+                                var mediaKey = Path.Combine(tweetDirectoryKey, mediaFileName);
+
+                                Log("Transferring... " + mediaURL);
+                                await TransferMediaAsync(s3, mediaURL, mediaKey);
+                                Log("Uploaded to s3 key: " + mediaKey);
+                            }
+                        }
                         break;
 
                     case CollateAction.download:
-                        Log("Text:  " + tweet.Text);
+                        Log("Downloading...");
 
                         var groupPath = CalcGroupDirectoryPath();
                         EnsurePath(groupPath);
                         var csvFilePath = Path.Combine(groupPath, csvFilename);
-                        AppendCsv(csvFilePath, tweet);
+                        CsvHelper.AppendCsvFile(csvFilePath, tweet);
 
                         int count = 0;
                         foreach (var mediaURL in tweet.ImageUrls)
@@ -102,7 +146,7 @@ namespace ImageCollatorLib
                             var name = CalcMediaFilename(tweet, mediaURL, mediaIndex);
                             var path = Path.Combine(tweetDirectory, name);
                             Log("Downloading... " + mediaURL);
-                            await RetrieveMediaAsync(mediaURL, path);
+                            await DownloadMediaToFileAsync(mediaURL, path);
                             Log("Downloaded to: " + path);
                         }
                         break;
@@ -113,65 +157,64 @@ namespace ImageCollatorLib
             }
         }
 
-        public void AppendCsv(string path, params MinimalTweetDTO[] tweets)
+        private async Task StreamToS3Async(S3Helper s3, IEnumerable<MinimalTweetDTO> tweets, string fileKey)
         {
-            switch (action)
+            var output = new MemoryStream();
+            using (var writer = new StreamWriter(output))
             {
-                case CollateAction.list:
-                    // NOP
-                    break;
-
-                case CollateAction.download:
-                    if (!File.Exists(path))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    await csv.WriteRecordsAsync(tweets);
+                    await csv.FlushAsync();
+                    using (var transfer = new TransferUtility(s3.Client))
                     {
-                        using (var writer = new StreamWriter(path))
-                        {
-                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                            {
-                                csv.WriteRecords(tweets);
-                            }
-                        }
+                        output.Position = 0;
+                        await transfer.UploadAsync(output, bucket, fileKey);
                     }
-                    else
+                }
+            }
+
+        }
+
+        public async Task TransferMediaAsync(S3Helper s3, string urlFrom, string keyTo)
+        {
+            var uri = new Uri(urlFrom);
+            using (var client = new WebClient())
+            {
+                using (var dataStream = await client.OpenReadTaskAsync(uri))
+                {
+                    using (var transfer = new TransferUtility(s3.Client))
                     {
-                        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                        //var request = new GetPreSignedUrlRequest()
+                        //{
+                        //    BucketName = bucket,
+                        //    Key = keyTo
+                        //};
+                        //var url = s3.Client.GetPreSignedURL(request);
+
+                        var request = new PutObjectRequest()
                         {
-                            HasHeaderRecord = false,
+                            Key = keyTo,
+                            BucketName = bucket,
+                            InputStream = dataStream
                         };
-                        using (var stream = File.Open(path, FileMode.Append))
-                        using (var writer = new StreamWriter(stream))
-                        using (var csv = new CsvWriter(writer, config))
-                        {
-                            csv.WriteRecords(tweets);
-                        }
-                    }
-                    break;
+                        var response = await s3.Client.PutObjectAsync(request);
+                        if (response.HttpStatusCode != HttpStatusCode.OK) { throw new Exception("failed"); }
 
-                case CollateAction.s3:
-                    throw new NotImplementedException("s3 csv not implemented yet");
+                        // await transfer.UploadAsync(dataStream, bucket, keyTo);
+                        // TODO: clean up
+                    }
+                }
             }
         }
 
-        public async Task RetrieveMediaAsync(string urlFrom, string pathTo)
+        public async Task DownloadMediaToFileAsync(string urlFrom, string pathTo)
         {
             var uri = new Uri(urlFrom);
-            switch (action)
+            using (var client = new WebClient())
             {
-                case CollateAction.list:
-                    // NOP
-                    break;
-
-                case CollateAction.download:
-                    using (var client = new WebClient())
-                    {
-                        await client.DownloadFileTaskAsync(uri, pathTo);
-                    }
-                    break;
-
-                case CollateAction.s3:
-                    throw new NotImplementedException("s3 download not implemented yet");
+                await client.DownloadFileTaskAsync(uri, pathTo);
             }
-
         }
     }
 }

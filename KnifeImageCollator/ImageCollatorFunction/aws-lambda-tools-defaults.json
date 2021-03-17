@@ -5,8 +5,8 @@
     "dotnet lambda help",
     "All the command line options for the Lambda command can be specified in this file."
   ],
-  "profile": "",
-  "region": "",
+  "profile": "sa-image-collator",
+  "region": "eu-west-2",
   "configuration": "Release",
   "framework": "netcoreapp3.1",
   "function-runtime": "dotnetcore3.1",
