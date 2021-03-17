@@ -179,10 +179,14 @@ namespace ImageCollatorLib
         public async Task TransferMediaAsync(S3Helper s3, string urlFrom, string keyTo)
         {
             var uri = new Uri(urlFrom);
+            var data = new MemoryStream();
             using (var client = new WebClient())
             {
-                using (var dataStream = await client.OpenReadTaskAsync(uri))
+                using (var downloadStream = await client.OpenReadTaskAsync(uri))
                 {
+                    await downloadStream.CopyToAsync(data);
+                    data.Position = 0;
+
                     using (var transfer = new TransferUtility(s3.Client))
                     {
                         //var request = new GetPreSignedUrlRequest()
@@ -196,7 +200,7 @@ namespace ImageCollatorLib
                         {
                             Key = keyTo,
                             BucketName = bucket,
-                            InputStream = dataStream
+                            InputStream = data
                         };
                         var response = await s3.Client.PutObjectAsync(request);
                         if (response.HttpStatusCode != HttpStatusCode.OK) { throw new Exception("failed"); }
