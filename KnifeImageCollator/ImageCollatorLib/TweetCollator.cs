@@ -122,10 +122,9 @@ namespace ImageCollatorLib
                     break;
 
                 case CollateAction.download:
-                    var fullPath = Path.Combine(Directory.GetCurrentDirectory(), path);
-                    if (!File.Exists(fullPath))
+                    if (!File.Exists(path))
                     {
-                        using (var writer = new StreamWriter(fullPath))
+                        using (var writer = new StreamWriter(path))
                         {
                             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                             {
@@ -139,7 +138,7 @@ namespace ImageCollatorLib
                         {
                             HasHeaderRecord = false,
                         };
-                        using (var stream = File.Open(fullPath, FileMode.Append))
+                        using (var stream = File.Open(path, FileMode.Append))
                         using (var writer = new StreamWriter(stream))
                         using (var csv = new CsvWriter(writer, config))
                         {

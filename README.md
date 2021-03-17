@@ -32,13 +32,15 @@ dotnet run <environment> <username> <period> <filter> <action> <group>
 
 It will retrieve and summarise all tweets posted by that username, placing them in the following folder structure:
 
-
-
+```
+<group>/tweets.csv
+<group>/<yyyy-MM-dd>/<timestamp>-<username>-<tweetid>-<index>.<png|jpg>
+```
 
 eg.
 
 ```bash
-dotnet run prod instantiator today imagesonly download test
+dotnet run prod instantiator today imagesonly download test-group
 ```
 
 ## Environment variables
