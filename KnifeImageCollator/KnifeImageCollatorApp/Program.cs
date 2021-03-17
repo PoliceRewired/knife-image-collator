@@ -16,12 +16,12 @@ namespace KnifeImageCollatorApp
             var actionStr = GetArg(args, 4, "action").Trim().ToLower();
             var group = GetArg(args, 5, "group").Trim().ToLower();
 
-            var dates = ArgumentHelper.ParsePeriod(periodStr);
+            var dates = PeriodHelper.ParsePeriod(periodStr);
             var start = dates[0];
             var end = dates[1];
 
-            var tweetFilter = ArgumentHelper.ParseTweetFilter(filterStr);
-            var mediaFilter = ArgumentHelper.ParseMediaFilter(filterStr);
+            var tweetFilter = FilterHelper.ParseTweetFilter(filterStr);
+            var mediaFilter = FilterHelper.ParseMediaFilter(filterStr);
 
             Console.WriteLine("Environment: " + environment);
             Console.WriteLine("Username:    " + username);
@@ -41,38 +41,9 @@ namespace KnifeImageCollatorApp
                 username,
                 start, end,
                 tweetFilter,mediaFilter);
-            
-            foreach (var mt in found)
-            {
-                var directory = Path.Combine(Directory.GetCurrentDirectory(), group, mt.Created.ToString("yyyy-MM-dd"));
-                Directory.CreateDirectory(directory);
 
-                switch (actionStr)
-                {
-                    case "list":
-                        Console.WriteLine("Text: " + mt.Text);
-                        break;
-
-                    case "download":
-                        Console.WriteLine("Text:  " + mt.Text);
-                        // TODO: append to CSV
-
-                        int count = 0;
-                        foreach (var media in mt.ImageUrls)
-                        {
-                            int mediaIndex = count++;
-                            var name = string.Format("{0}-{1}-{2}-{3}", mt.Created.Ticks, mt.Username, mt.TweetId, mediaIndex);
-                            var path = Path.Combine(directory, name);
-                            // TODO: download the image
-                            Console.WriteLine("Image: " + path);
-                        }
-                        break;
-
-                    default:
-                        throw new ArgumentException("Unrecognised action: " + actionStr);
-                }
-                
-            }
+            var collator = TweetCollator.FromArgs(filterStr, actionStr, group, "tweets.csv", Console.WriteLine);
+            await collator.CollateAsync(found);
         }
 
         public static string GetArg(string[] args, int index, string name, bool required = true)

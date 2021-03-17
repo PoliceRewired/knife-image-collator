@@ -49,8 +49,6 @@ namespace ImageCollatorLib
                             TweetId = tweet.Id,
                             ImageUrls = tweet.Media.Where(mediaFilter).Select(m => m.MediaURLHttps)
                         };
-                        Console.WriteLine("MediaTypes: " + string.Join(",", tweet.Media.Select(m => m.MediaType)));
-
                         collatedTweets.Add(minimalTweet);
                     }                    
                 }
