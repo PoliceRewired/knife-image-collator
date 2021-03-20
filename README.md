@@ -48,18 +48,18 @@ Choices for **period** are:
 
 Choices for **filter** are:
 
-* `images`
+* `images` - all images found are collated
 
 ### collation
 
 Choices for **collation** are:
 
-* `list`
-* `download`
-* `s3`
-* `github` (coming soon)
+* `list` - logs all filtered images
+* `download` - retrieves filtered images, places into a local folder structure
+* `s3` - retrieves filtered images, transfers them to an s3 bucket
+* `github` - retrieves filtered images, transfers them to a github repository (coming soon)
 
-For the `s3` collation, also provide `S3_BUCKET` environment variable, and run in an environment with permission to acccess the S3 bucket.
+For the `s3` collation, also provide `S3_BUCKET` environment variable, and run in an environment with permission to acccess the S3 bucket (eg. a lambda function).
 
 For the `github` collation, also provide `GITHUB_TOKEN` and `GITHUB_REPOSITORY` environment variables.
 
