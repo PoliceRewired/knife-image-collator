@@ -24,7 +24,7 @@ namespace ImageCollatorLib.Collation
 
         protected override async Task InitTransactionAsync()
         {
-            s3 = new S3Helper(bucket, Log);
+            s3 = s3 ?? new S3Helper(bucket, Log);
         }
 
         protected override async Task CommitTransactionAsync()

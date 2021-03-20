@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using ImageCollatorLib.Entities;
 
 namespace ImageCollatorLib.Helpers
@@ -31,6 +32,14 @@ namespace ImageCollatorLib.Helpers
             }
             else
             {
+                if (periodStr.Contains(":"))
+                {
+                    var parts = periodStr.Split(':');
+                    var start = DateTime.ParseExact(parts[0], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    var end = DateTime.ParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    return new DateTime[] { start, end };
+                }
+
                 throw new ArgumentException("Unrecognised: " + periodStr, "period");
             }
         }

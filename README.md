@@ -25,11 +25,6 @@ You can test the tool locally using the associated command line app `KnifeImageC
 dotnet run <environment> <username> <period> <filter> <collation> <group>
 ```
 
-* Choices for **period**: `today`, `yesterday`, `thisweek`, `lastweek`
-* Choices for **filter**: `images`
-* Choices for **collation**: `list`, `download`, `s3`, `github`*
-* For **group**, provide a name to group all results by
-
 It will retrieve and summarise the tweet media posted by that username, placing it all the following folder structure:
 
 ```
@@ -43,6 +38,41 @@ eg.
 dotnet run prod instantiator today images download test-group
 ```
 
+#### period
+
+Choices for **period** are:
+
+* `today`
+* `yesterday`
+* `thisweek`
+* `lastweek`
+* a range, specifying start:end dates in this format: `dd-MM-yyyy:dd-MM-yyyy`
+
+(NB. the first date is inclusive, but the second is not)
+
+#### filter
+
+Choices for **filter** are:
+
+* `images`
+
+#### collation
+
+Choices for **collation** are:
+
+* `list`
+* `download`
+* `s3`
+* `github` (coming soon)
+
+For the `s3` collation, also provide `S3_BUCKET` environment variable, and run in an environment with permission to acccess the S3 bucket.
+
+For the `github` collation, also provide `GITHUB_TOKEN` and `GITHUB_REPOSITORY` environment variables.
+
+#### group
+
+For **group**, provide a name to group all results by.
+
 ## Environment variables
 
 Provide the following environment variables:
@@ -51,3 +81,6 @@ Provide the following environment variables:
 * `TWITTER_CONSUMER_KEY_SECRET`
 * `TWITTER_ACCESS_TOKEN`
 * `TWITTER_ACCESS_TOKEN_SECRET`
+* `AWS_S3_BUCKET` (optional)
+* `GITHUB_REPOSITORY` (optional)
+* `GITHUB_TOKEN` (optional)
