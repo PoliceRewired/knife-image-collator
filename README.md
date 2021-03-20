@@ -4,13 +4,7 @@ A tool to scan twitter accounts for images of knives and collate them for furthe
 
 This project is under development. Please check back for updates and more information.
 
-## Usage
-
-### Automation
-
-This tool will eventually run as an AWS lambda or batch task.
-
-### Manual testing
+## Manual testing
 
 You can test the tool locally using the associated command line app `KnifeImageCollatorApp`.
 
@@ -38,7 +32,7 @@ eg.
 dotnet run prod instantiator today images download test-group
 ```
 
-#### period
+### period
 
 Choices for **period** are:
 
@@ -50,13 +44,13 @@ Choices for **period** are:
 
 (NB. the first date is inclusive, but the second is not)
 
-#### filter
+### filter
 
 Choices for **filter** are:
 
 * `images`
 
-#### collation
+### collation
 
 Choices for **collation** are:
 
@@ -69,9 +63,68 @@ For the `s3` collation, also provide `S3_BUCKET` environment variable, and run i
 
 For the `github` collation, also provide `GITHUB_TOKEN` and `GITHUB_REPOSITORY` environment variables.
 
-#### group
+### group
 
 For **group**, provide a name to group all results by.
+
+## The lambda
+
+### Set up AWS CLI
+
+Create a service account IAM user. In our case: `sa-image-collator`
+
+You'll need to safely store the access key id and secret access key.
+
+Configure a local profile to match, and provide the access key id, and secret access key.
+
+```
+aws configure --profile sa-image-collator
+```
+
+### Template
+
+To create a template lambda project:
+
+```
+dotnet new -i Amazon.Lambda.Templates
+dotnet new lambda.EmptyFunction --help
+dotnet new lambda.EmptyFunction --name DistributeSocialLambda
+```
+
+### Deploy
+
+The Amazon lambda tools are required (installed by `init.sh`):
+
+```
+dotnet tool install -g Amazon.Lambda.Tools
+dotnet tool update -g Amazon.Lambda.Tools
+```
+
+Use `deploy.sh` or the dotnet lambda to deploy the function naming the profile and role:
+
+```
+dotnet lambda deploy-function --profile sa-image-collator ImageCollatorFunction --function-role role-image-collator
+```
+
+If the `role-image-collator` role doesn't exist, you'll need to create it first. You'll also have to attach an IAM Policy to the role. `AWSLambdaExecute`, looks about right.
+
+#### Deployment environment
+
+You can provide the environment variables to the lambda through AWS web interface.
+
+If you'd rather do it from the command line, you can use the `--environment-variables` option to provide the various secrets, as: `<key1>=<value1>;<key2>=<value2>` etc.
+
+You could also add an `environment-variables` key in the `aws-lambda-tools-default.json` file, but be careful not to include your secrets in a public github repo.
+
+### Test
+
+Test the lambda as it stands with `dotnet lambda invoke-function`, provide the local profile and a payload.
+
+You can use `run-lambda.sh`, or:
+
+```
+dotnet lambda invoke-function ImageCollatorFunction --region eu-west-2 --profile sa-image-collator --payload '{ "collation": "list", "accounts": "instantiator", "period": "2021-03-19:2021-03-20", "group": "test-group" }'
+```
 
 ## Environment variables
 
