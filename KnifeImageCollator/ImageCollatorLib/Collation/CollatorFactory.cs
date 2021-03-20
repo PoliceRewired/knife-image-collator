@@ -5,7 +5,7 @@ namespace ImageCollatorLib.Collation
 {
     public class CollatorFactory
     {
-        public static ICollator Create(Collations collation, Action<string> log, string group, string s3bucket = null, string githubToken = null, string githubRepository = null)
+        public static ICollator Create(Collations collation, Action<string> log, string group, string s3bucket = null, string githubToken = null, string githubOwner = null, string githubRepository = null)
         {
             switch (collation)
             {
@@ -16,7 +16,7 @@ namespace ImageCollatorLib.Collation
                     return new S3Collator(group, s3bucket, log);
                     
                 case Collations.github:
-                    return new GithubCollator(githubRepository, githubToken, group, log);
+                    return new GithubCollator(githubOwner, githubRepository, githubToken, group, log);
 
                 case Collations.list:
                     return new ListCollator(group, log);

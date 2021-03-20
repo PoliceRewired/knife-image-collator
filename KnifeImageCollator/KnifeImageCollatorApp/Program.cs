@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ImageCollatorLib;
 using ImageCollatorLib.Collation;
@@ -22,8 +23,8 @@ namespace KnifeImageCollatorApp
 
             Console.WriteLine("Environment: " + environment);
             Console.WriteLine("Username:    " + username);
-            Console.WriteLine("Filter:      " + filterStr);
             Console.WriteLine("Period:      " + periodStr);
+            Console.WriteLine("Filter:      " + filterStr);
 
             var dates = PeriodHelper.ParsePeriod(periodStr);
             var start = dates[0];
@@ -43,6 +44,7 @@ namespace KnifeImageCollatorApp
             var twitterAccessTokenSecret = GetEnv("TWITTER_ACCESS_TOKEN_SECRET");
             var bucket = GetEnv("AWS_S3_BUCKET", collation == Collations.s3);
             var githubToken = GetEnv("GITHUB_TOKEN", collation == Collations.github);
+            var githubOwner = GetEnv("GITHUB_OWNER", collation == Collations.github);
             var githubRepository = GetEnv("GITHUB_REPOSITORY", collation == Collations.github);
 
             var inspector = new TwitterInspector(
@@ -54,12 +56,22 @@ namespace KnifeImageCollatorApp
                 Console.WriteLine);
 
             var found = await inspector.FilterTimelineAsync(username, start, end);
-            var collator = CollatorFactory.Create(collation, Console.WriteLine, group, bucket); // TODO adapt for github/s3
+            var collator = CollatorFactory.Create(
+                collation,
+                Console.WriteLine,
+                group,
+                s3bucket: bucket,
+                githubToken: githubToken,
+                githubOwner: githubOwner,
+                githubRepository: githubRepository);
+
+            collator.Verbose = true;
+
             var result = await collator.CollateAsync(found);
 
             Console.WriteLine(string.Format("Summaries: {0}", result.Summaries));
             Console.WriteLine(string.Format("Files:     {0}", result.Files));
-            Console.WriteLine(string.Format("Errors:  \n{0}", string.Join('\n',result.Errors)));
+            Console.WriteLine(string.Format("Errors:\n{0}", string.Join('\n',result.Errors)));
         }
 
         public static string GetArg(string[] args, int index, string name, bool required = true)

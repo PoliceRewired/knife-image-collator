@@ -33,7 +33,7 @@ namespace ImageCollatorLib.Collation
             s3 = null;
         }
 
-        protected override async Task AppendCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        protected override async Task<IEnumerable<MediaDetails>> ReadCurrentCsvAsync(string path)
         {
             var keys = await s3.ListBucketObjects();
 
@@ -41,15 +41,18 @@ namespace ImageCollatorLib.Collation
             {
                 using (var csvStream = await s3.GetObjectAsync(path))
                 {
-                    var recordedMedias = Helpers.CsvHelper.ReadCsv(csvStream);
-                    recordedMedias.AddRange(medias);
-                    await s3.StreamCsvToS3Async(recordedMedias, path);
+                    return Helpers.CsvFileHelper.ReadCsv(csvStream);
                 }
             }
             else
             {
-                await s3.StreamCsvToS3Async(medias, path);
+                return new List<MediaDetails>();
             }
+        }
+
+        protected override async Task StoreNewCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        {
+            await s3.StreamCsvToS3Async(medias, path);
         }
 
         protected override async Task TransferImageAsync(string url, string path)

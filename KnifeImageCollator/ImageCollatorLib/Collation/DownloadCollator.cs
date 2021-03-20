@@ -20,10 +20,17 @@ namespace ImageCollatorLib.Collation
 
         protected override async Task InitTransactionAsync() { }
 
-        protected override async Task AppendCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        protected override async Task<IEnumerable<MediaDetails>> ReadCurrentCsvAsync(string path)
         {
+            // don't actually read the CSV - for local files we can append
+            return new List<MediaDetails>();
+        }
+
+        protected override async Task StoreNewCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        {
+            // ensure the directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            Helpers.CsvHelper.AppendCsvFile(path, medias);
+            Helpers.CsvFileHelper.AppendCsvFile(path, medias);
         }
 
         protected override async Task TransferImageAsync(string url, string path)

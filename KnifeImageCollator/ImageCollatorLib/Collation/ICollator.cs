@@ -7,6 +7,7 @@ namespace ImageCollatorLib.Collation
 {
     public interface ICollator
     {
+        bool Verbose { get; set; }
         Task<CollationSummary> CollateAsync(IEnumerable<MediaDetails> tweets);
 
     }

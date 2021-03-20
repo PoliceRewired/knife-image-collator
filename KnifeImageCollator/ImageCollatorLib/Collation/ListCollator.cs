@@ -12,8 +12,14 @@ namespace ImageCollatorLib.Collation
         {
         }
 
-        protected override async Task AppendCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        protected override async Task<IEnumerable<MediaDetails>> ReadCurrentCsvAsync(string path)
         {
+            return new List<MediaDetails>();
+        }
+
+        protected override async Task StoreNewCsvAsync(IEnumerable<MediaDetails> medias, string path)
+        {
+            Log("CSV path: " + path);
             foreach (var media in medias)
             {
                 Log(string.Format("Image {0} from: {1}", media.MediaIndex, media.TweetText));
