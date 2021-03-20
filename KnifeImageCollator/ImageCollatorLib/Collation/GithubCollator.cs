@@ -23,20 +23,16 @@ namespace ImageCollatorLib.Collation
             client = client ?? new GitHubClient(new ProductHeaderValue(GetType().FullName));
         }
 
-        protected override async Task CommitTransactionAsync()
-        {
-        }
+        protected override async Task CommitTransactionAsync() { }
 
         protected override async Task AppendCsvAsync(IEnumerable<MediaDetails> medias, string path)
         {
-
-
-
+            throw new NotImplementedException("GithubCollator not yet implemented.");
         }
 
         protected override async Task TransferImageAsync(string url, string path)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GithubCollator not yet implemented.");
         }
     }
 }
