@@ -5,8 +5,8 @@ namespace ImageCollatorFunction
 {
     public class ImageCollatorOutputs
     {
-        public int summaries = 0;
-        public int files = 0;
-        public List<string> errors = new List<string>();
+        public int summaries { get; set; } = 0;
+        public int files { get; set; } = 0;
+        public List<string> errors { get; set; } = new List<string>();
     }
 }

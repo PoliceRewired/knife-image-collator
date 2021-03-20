@@ -34,5 +34,7 @@ namespace ImageCollatorLib.Collation
         {
             throw new NotImplementedException("GithubCollator not yet implemented.");
         }
+
+        // see: https://laedit.net/2016/11/12/GitHub-commit-with-Octokit-net.html
     }
 }
