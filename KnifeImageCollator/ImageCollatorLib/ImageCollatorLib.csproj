@@ -7,6 +7,13 @@
   <ItemGroup>
     <PackageReference Include="TweetinviAPI" Version="5.0.3" />
     <PackageReference Include="CsvHelper" Version="26.0.1" />
-    <PackageReference Include="AWSSDK.S3" Version="3.5.9.7" />
+    <PackageReference Include="AWSSDK.S3" Version="3.5.10" />
+    <PackageReference Include="Octokit" Version="0.50.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Collation\" />
+    <Folder Include="Inspectors\" />
   </ItemGroup>
 </Project>

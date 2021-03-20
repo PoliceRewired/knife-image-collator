@@ -1,25 +1,27 @@
 ﻿using System;
-namespace ImageCollatorLib
+using ImageCollatorLib.Entities;
+
+namespace ImageCollatorLib.Helpers
 {
     public class PeriodHelper
     {
         public static DateTime[] ParsePeriod(string periodStr)
         {
-            Period period;
+            Periods period;
             var ok = Enum.TryParse(periodStr, out period);
             if (ok)
             {
                 switch (period)
                 {
-                    case Period.today:
+                    case Periods.today:
                         return new DateTime[] { DateTime.Now.Date, DateTime.Now.Date.AddDays(1) };
-                    case Period.yesterday:
+                    case Periods.yesterday:
                         return new DateTime[] { DateTime.Now.Date.AddDays(-1), DateTime.Now.Date };
-                    case Period.lastweek:
+                    case Periods.lastweek:
                         var endLastWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek);
                         var beginLastWeek = endLastWeek.AddDays(-7);
                         return new DateTime[] { beginLastWeek, endLastWeek };
-                    case Period.thisweek:
+                    case Periods.thisweek:
                         var beginThisWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek);
                         var endThisWeek = beginThisWeek.AddDays(7);
                         return new DateTime[] { beginThisWeek, endThisWeek };

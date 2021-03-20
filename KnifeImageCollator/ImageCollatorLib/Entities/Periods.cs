@@ -1,7 +1,7 @@
 ﻿using System;
-namespace ImageCollatorLib
+namespace ImageCollatorLib.Entities
 {
-    public enum Period
+    public enum Periods
     {
         today,
         yesterday,

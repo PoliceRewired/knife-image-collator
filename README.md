@@ -22,25 +22,25 @@ You can test the tool locally using the associated command line app `KnifeImageC
 * Build and run the app:
 
 ```
-dotnet run <environment> <username> <period> <filter> <action> <group>
+dotnet run <environment> <username> <period> <filter> <collation> <group>
 ```
 
 * Choices for **period**: `today`, `yesterday`, `thisweek`, `lastweek`
-* Choices for **filter**: `all`, `imagesonly`
-* Choices for **action**: `list`, `download`
+* Choices for **filter**: `images`
+* Choices for **collation**: `list`, `download`, `s3`, `github`*
 * For **group**, provide a name to group all results by
 
-It will retrieve and summarise all tweets posted by that username, placing them in the following folder structure:
+It will retrieve and summarise the tweet media posted by that username, placing it all the following folder structure:
 
 ```
-<group>/tweets.csv
-<group>/<yyyy-MM-dd>/<timestamp>-<username>-<tweetid>-<index>.<png|jpg>
+<group>/collated-media.csv
+<group>/<yyyy-MM-dd>/<timestamp>-<username>-<index>.<png|jpg>
 ```
 
 eg.
 
 ```bash
-dotnet run prod instantiator today imagesonly download test-group
+dotnet run prod instantiator today images download test-group
 ```
 
 ## Environment variables
