@@ -14,7 +14,7 @@ namespace ImageCollatorFunction.Tests
             var context = new TestLambdaContext();
             var inputs = new ImageCollatorInputs()
             {
-                accounts = "",
+                accounts = new string[0],
                 collation = "download",
                 period = "today"
             };
