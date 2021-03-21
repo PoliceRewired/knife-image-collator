@@ -4,6 +4,13 @@ A tool to scan twitter accounts for images of knives and collate them for furthe
 
 This project is under development. Please check back for updates and more information.
 
+## Automation
+
+This tool is intended to run as an AWS lambda. Its tasks are:
+
+* Retrieve tweets with images from specified github accounts
+* 
+
 ## Manual testing
 
 You can test the tool locally using the associated command line app `KnifeImageCollatorApp`.

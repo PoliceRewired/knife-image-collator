@@ -23,7 +23,7 @@ namespace ImageCollatorFunction
             this.context = context;
 
             Log("Collation: " + input.collation);
-            Log("Accounts:  " + input.accounts);
+            Log("Accounts:  " + string.Join(",",input.accounts));
             Log("Period:    " + input.period);
             Log("Group:     " + input.group);
 
@@ -45,8 +45,6 @@ namespace ImageCollatorFunction
             var start = dates[0];
             var end = dates[1];
 
-            var accounts = input.accounts.Split(",");
-
             var inspector = new TwitterInspector(
                 twitterApiKey,
                 twitterApiKeySecret,
@@ -59,7 +57,7 @@ namespace ImageCollatorFunction
 
             var outputs = new ImageCollatorOutputs();
 
-            foreach (var account in accounts)
+            foreach (var account in input.accounts)
             {
                 var medias = await inspector.FilterTimelineAsync(account, start, end);
                 var summary = await collator.CollateAsync(medias);

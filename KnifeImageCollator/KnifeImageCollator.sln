@@ -11,6 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 		..\.gitignore = ..\.gitignore
+		build.sh = build.sh
+		deploy.sh = deploy.sh
+		init.sh = init.sh
+		run-lambda.sh = run-lambda.sh
+		test.sh = test.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCollatorFunction", "ImageCollatorFunction\ImageCollatorFunction.csproj", "{DDB3795C-52A1-4BD3-BF8D-013B7AF0103A}"
