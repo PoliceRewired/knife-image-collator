@@ -57,7 +57,7 @@ Choices for **collation** are:
 * `list` - logs all filtered images
 * `download` - retrieves filtered images, places into a local folder structure
 * `s3` - retrieves filtered images, transfers them to an s3 bucket
-* `github` - retrieves filtered images, transfers them to a github repository (coming soon)
+* `github` - retrieves filtered images, transfers them to a github repository
 
 For the `s3` collation, also provide `S3_BUCKET` environment variable, and run in an environment with permission to acccess the S3 bucket (eg. a lambda function).
 
@@ -134,6 +134,7 @@ Provide the following environment variables:
 * `TWITTER_CONSUMER_KEY_SECRET`
 * `TWITTER_ACCESS_TOKEN`
 * `TWITTER_ACCESS_TOKEN_SECRET`
-* `AWS_S3_BUCKET` (optional)
-* `GITHUB_REPOSITORY` (optional)
-* `GITHUB_TOKEN` (optional)
+* `AWS_S3_BUCKET` (if storing data in an S3 bucket)
+* `GITHUB_OWNER` (if storing data in github)
+* `GITHUB_REPOSITORY` (if storing data in github)
+* `GITHUB_TOKEN` (if storing data in github)
