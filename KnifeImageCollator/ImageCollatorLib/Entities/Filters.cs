@@ -3,6 +3,7 @@ namespace ImageCollatorLib.Entities
 {
     public enum Filters
     {
-        images
+        images,
+        keywords
     }
 }

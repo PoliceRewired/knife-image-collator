@@ -20,7 +20,7 @@ namespace ImageCollatorLib.Collation
         string owner;
         Credentials credentials;
         GitHubClient github;
-        string mainBranch = "master";
+        string mainBranch = "main";
         Commit lastCommit;
         Reference masterReference;
         NewTree newTree;

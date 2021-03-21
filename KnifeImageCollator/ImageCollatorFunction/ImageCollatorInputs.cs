@@ -7,5 +7,8 @@ namespace ImageCollatorFunction
         public string[] accounts { get; set; }
         public string period { get; set; }
         public string group { get; set; }
+        public string filter { get; set; }
+        public string[] keywords_list { get; set; }
+        public string keywords_list_url { get; set; }
     }
 }

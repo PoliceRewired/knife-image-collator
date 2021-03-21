@@ -20,11 +20,14 @@ namespace KnifeImageCollatorApp
             var filterStr = GetArg(args, 3, "filter").Trim().ToLower();
             var collationStr = GetArg(args, 4, "collation").Trim().ToLower();
             var group = GetArg(args, 5, "group").Trim().ToLower();
+            var keywordsList = new string[0];
+            var keywordsListUrl = GetArg(args, 6, "keywords-list-url", false)?.Trim().ToLower();
+            // TODO: permit the user to provide a keywords list from a local file if they like
 
             Console.WriteLine("Environment: " + environment);
             Console.WriteLine("Username:    " + username);
-            Console.WriteLine("Period:      " + periodStr);
             Console.WriteLine("Filter:      " + filterStr);
+            Console.WriteLine("Period:      " + periodStr);
 
             var dates = PeriodHelper.ParsePeriod(periodStr);
             var start = dates[0];
@@ -47,15 +50,19 @@ namespace KnifeImageCollatorApp
             var githubOwner = GetEnv("GITHUB_OWNER", collation == Collations.github);
             var githubRepository = GetEnv("GITHUB_REPOSITORY", collation == Collations.github);
 
+            var keywords = filter == Filters.keywords ? await KeywordsHelper.FindKeywordsAsync(keywordsList, keywordsListUrl) : null;
+
             var inspector = new TwitterInspector(
                 twitterApiKey,
                 twitterApiKeySecret,
                 twitterAccessToken,
                 twitterAccessTokenSecret,
                 filter,
-                Console.WriteLine);
+                Console.WriteLine,
+                keywords);
 
             var found = await inspector.FilterTimelineAsync(username, start, end);
+
             var collator = CollatorFactory.Create(
                 collation,
                 Console.WriteLine,

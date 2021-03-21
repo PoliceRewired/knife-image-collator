@@ -9,6 +9,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using CsvHelper;
 using ImageCollatorLib.Entities;
+using ImageCollatorLib.Helpers;
 
 namespace ImageCollatorLib.Collation
 {
@@ -22,15 +23,24 @@ namespace ImageCollatorLib.Collation
 
         protected override async Task<IEnumerable<MediaDetails>> ReadCurrentCsvAsync(string path)
         {
-            // don't actually read the CSV - for local files we can append
-            return new List<MediaDetails>();
+            if (File.Exists(path))
+            {
+                using (var stream = File.OpenRead(path))
+                {
+                    return CsvFileHelper.ReadCsv(stream);
+                }
+            }
+            else
+            {
+                return new List<MediaDetails>();
+            }
         }
 
         protected override async Task StoreNewCsvAsync(IEnumerable<MediaDetails> medias, string path)
         {
             // ensure the directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            Helpers.CsvFileHelper.AppendCsvFile(path, medias);
+            CsvFileHelper.AppendCsvFile(path, medias);
         }
 
         protected override async Task TransferImageAsync(string url, string path)

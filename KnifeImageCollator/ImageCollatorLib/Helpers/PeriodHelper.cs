@@ -19,11 +19,11 @@ namespace ImageCollatorLib.Helpers
                     case Periods.yesterday:
                         return new DateTime[] { DateTime.Now.Date.AddDays(-1), DateTime.Now.Date };
                     case Periods.lastweek:
-                        var endLastWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek);
+                        var endLastWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek).Date;
                         var beginLastWeek = endLastWeek.AddDays(-7);
                         return new DateTime[] { beginLastWeek, endLastWeek };
                     case Periods.thisweek:
-                        var beginThisWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek);
+                        var beginThisWeek = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek).Date;
                         var endThisWeek = beginThisWeek.AddDays(7);
                         return new DateTime[] { beginThisWeek, endThisWeek };
                     default:

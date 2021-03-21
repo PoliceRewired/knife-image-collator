@@ -9,7 +9,7 @@ namespace ImageCollatorLib.Entities
     {
         public DateTime Created { get; set; }
         public string CreatedUniversal => Created.ToUniversalTime().ToString("u");
-        public string CreatedSimple => Created.ToString("yyyyMMddhhmmss");
+        public string CreatedSimple => Created.ToString("yyyy-MM-dd hh:mm:ss");
         public string MediaUrl { get; set; }
         public long TweetId { get; set; }
         public long MediaId { get; set; }
@@ -43,17 +43,19 @@ namespace ImageCollatorLib.Entities
                 {
                     var parts = MediaUrl.Split(".");
                     var suffix = parts[parts.Length - 1];
-                    return string.Format("{0}-{1}-{2}.{3}",
+                    return string.Format("{0} {1} {2} {3}.{4}",
                         CreatedSimple,
                         Username,
+                        TweetId,
                         MediaIndex,
                         suffix);
                 }
                 else
                 {
-                    return string.Format("{0}-{1}-{2}",
+                    return string.Format("{0} {1} {2} {3}",
                         CreatedSimple,
                         Username,
+                        TweetId,
                         MediaIndex);
                 }
             }

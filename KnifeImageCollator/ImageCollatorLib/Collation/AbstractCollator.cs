@@ -105,7 +105,7 @@ namespace ImageCollatorLib.Collation
 
         protected string GroupPath => group;
 
-        protected string MediaDirectory(MediaDetails media) => media.Created.ToString("yyyy-MM-dd");
-
+        // protected string MediaDirectory(MediaDetails media) => media.Created.ToString("yyyy-MM-dd");
+        protected string MediaDirectory(MediaDetails media) => media.Created.ToString("yyyy-MM");
     }
 }

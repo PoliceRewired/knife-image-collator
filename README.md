@@ -8,8 +8,51 @@ This project is under development. Please check back for updates and more inform
 
 This tool is intended to run as an AWS lambda. Its tasks are:
 
-* Retrieve tweets with images from specified github accounts
-* 
+* Retrieve tweets with images from specified github accounts (filtered for certain features)
+* Summarise everything found into a CSV
+* Download and store the images from those tweets in the specified collation medium
+
+## Run the lambda
+
+Test the lambda as it stands with `dotnet lambda invoke-function`, provide the local profile and a payload.
+
+You can use `run-lambda.sh` to see some simple sample output listed (drawn from last week's [MetTaskforce](https://twitter.com/mettaskforce) twitter account), or provide your own values:
+
+```
+dotnet lambda invoke-function ImageCollatorFunction --region eu-west-2 --profile sa-image-collator --payload '{ "collation": "", "accounts": [], "filter": "", "keywords_list": [], "keywords_list_url": "", "period": "", "group": "" }'
+```
+
+The payload contains a number of instructions for the collator:
+
+`collation` - Where to collate images. Choices are:
+
+  * `list` (just lists the content of tweets chosen for inclusion)
+  * `download` (downloads tweets and images to local file system)
+  * `s3` (stores tweets and images in an AWS S3 bucket)
+  * `github` (stores tweets and images in a github repository)
+
+`accounts` - A list of the accounts to inspect.
+
+`filter` - A filter to appy to these accounts. Choices are:
+
+  * `images` (all tweets with images are retrieved)
+  * `keywords` (all tweets that contain any of the keywords are retrieved)
+
+`keywords_list` - All keywords to consider for the `keywords` filter.
+
+`keywords_list_url` - A URL to retrieve the keywords list from instead.
+
+  * eg. https://raw.githubusercontent.com/PoliceRewired/image-collations/main/keywords-list-knife-tweets.txt
+
+`period` - The date range to search. Choices are:
+
+* `today`
+* `yesterday`
+* `thisweek`
+* `lastweek`
+* `dd-MM-yyyy:dd-MM-yyyy` (a range of days starting at the beginning of the day of the first date, ending at the beginning of the day of the second date)
+
+`group` - Filename to group results by (eg. `test-group-mps-taskforce`) - this forms a part of the directory structure.
 
 ## Manual testing
 
@@ -23,7 +66,7 @@ You can test the tool locally using the associated command line app `KnifeImageC
 * Build and run the app:
 
 ```
-dotnet run <environment> <username> <period> <filter> <collation> <group>
+dotnet run <environment> <username> <period> <filter> <collation> <group> <keywords-list-url>
 ```
 
 It will retrieve and summarise the tweet media posted by that username, placing it all the following folder structure:
@@ -36,43 +79,15 @@ It will retrieve and summarise the tweet media posted by that username, placing 
 eg.
 
 ```bash
-dotnet run prod instantiator today images download test-group
+dotnet run prod mettaskforce lastweek images download test-group-met-taskforce
 ```
 
-### period
+or, to retrieve a recent range:
 
-Choices for **period** are:
+```bash
+dotnet run prod mettaskforce 2021-01-01:2021-03-21 keywords download test-group-met-taskforce https://raw.githubusercontent.com/PoliceRewired/image-collations/main/keywords-list-knife-tweets.txt
+```
 
-* `today`
-* `yesterday`
-* `thisweek`
-* `lastweek`
-* a range, specifying start:end dates in this format: `dd-MM-yyyy:dd-MM-yyyy`
-
-(NB. the first date is inclusive, but the second is not)
-
-### filter
-
-Choices for **filter** are:
-
-* `images` - all images found are collated
-
-### collation
-
-Choices for **collation** are:
-
-* `list` - logs all filtered images
-* `download` - retrieves filtered images, places into a local folder structure
-* `s3` - retrieves filtered images, transfers them to an s3 bucket
-* `github` - retrieves filtered images, transfers them to a github repository
-
-For the `s3` collation, also provide `S3_BUCKET` environment variable, and run in an environment with permission to acccess the S3 bucket (eg. a lambda function).
-
-For the `github` collation, also provide `GITHUB_TOKEN` and `GITHUB_REPOSITORY` environment variables.
-
-### group
-
-For **group**, provide a name to group all results by.
 
 ## The lambda
 
@@ -122,16 +137,6 @@ You can provide the environment variables to the lambda through AWS web interfac
 If you'd rather do it from the command line, you can use the `--environment-variables` option to provide the various secrets, as: `<key1>=<value1>;<key2>=<value2>` etc.
 
 You could also add an `environment-variables` key in the `aws-lambda-tools-default.json` file, but be careful not to include your secrets in a public github repo.
-
-### Test
-
-Test the lambda as it stands with `dotnet lambda invoke-function`, provide the local profile and a payload.
-
-You can use `run-lambda.sh`, or:
-
-```
-dotnet lambda invoke-function ImageCollatorFunction --region eu-west-2 --profile sa-image-collator --payload '{ "collation": "list", "accounts": "instantiator", "period": "2021-03-19:2021-03-20", "group": "test-group" }'
-```
 
 ## Environment variables
 
